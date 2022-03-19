@@ -1,9 +1,10 @@
 import {
   IQuestionApiResponse,
-  IQuiz,
+  Index,
   ISubmitQuestionBody,
   ISubmitQuestionResponse,
-} from '../types/IQuiz';
+  IUser,
+} from '../types';
 import qs from 'qs';
 
 export default class QuizApiService {
@@ -34,11 +35,24 @@ export default class QuizApiService {
           'X-Developer-Secret': this.developerSecret,
         },
       }
-    ).then((res) => res.json());
+    )
+      .then((res) => res.json())
     return response.token;
   };
 
-  public getAllQuizzes = async (): Promise<IQuiz[]> => {
+  public createPlayer = async (body): Promise<IUser> => {
+    const token = await this.getAccessToken();
+    return await fetch(`${this.quizApiBaseUrl}/v54/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': token,
+      },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
+  };
+
+  public getAllQuizzes = async (): Promise<Index[]> => {
     const token = await this.getAccessToken();
     return await fetch(`${this.quizApiBaseUrl}/v54/quizzes`, {
       headers: { 'X-Access-Token': token },

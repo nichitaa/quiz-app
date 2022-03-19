@@ -2,10 +2,10 @@ import { FC } from 'react';
 import QuizCard from '../../components/quiz-card/quiz-card';
 import { Col, Row, Typography } from 'antd';
 import QuizApiService from '../../services/quizApi';
-import { IQuiz } from '../../types/IQuiz';
+import { Index } from '../../types';
 
 interface MainProps {
-  quizzes: IQuiz[];
+  quizzes: Index[];
 }
 
 const Quizzes: FC<MainProps> = ({ quizzes }) => (

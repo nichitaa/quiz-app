@@ -1,13 +1,18 @@
-export interface IQuiz {
+/**
+ * The app has few simple interfaces/types that does not require splitting it over multiple files
+ */
+
+export interface Index {
   id: number;
   title: string;
   questions_count: number;
+  questions?: IQuestion[];
 }
 
 export interface IQuestion {
   id: number;
   question: string;
-  answers: string;
+  answers: string[];
   answered_correctly?: boolean;
   submitted_answer?: string;
 }
@@ -35,3 +40,9 @@ export type ISubmitQuestionResponse =
   | {
       error: string;
     };
+
+export interface IUser {
+  id: number;
+  name: string;
+  surname: string;
+}
