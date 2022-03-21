@@ -1,7 +1,9 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
-import { Button, Divider } from 'antd';
+import { Button, Divider, Row, Col } from 'antd';
+import { HomeActionCard } from '../components';
+
+require('../styles/home-page.less');
 
 const Home: NextPage = () => {
   return (
@@ -10,15 +12,16 @@ const Home: NextPage = () => {
         <title>quiz-app</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
-
-      <Link href={'/quizzes'}>
-        <Button size={'large'}>Quizzes</Button>
-      </Link>
-      <Divider/>
-
-      <Link href={'/create-player'}>
-        <Button size={'large'}>Create - player</Button>
-      </Link>
+      <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
+        <Row gutter={[8, 8]}>
+          <Col>
+            <HomeActionCard name={'Create player 🚀'} number={'01'} path={'/create-player'} text={''} />
+          </Col>
+          <Col>
+            <HomeActionCard name={'See all quizzes 👀'} number={'02'} path={'/quizzes'} text={''} />
+          </Col>
+        </Row>
+      </Row>
     </>
   );
 };
