@@ -1,16 +1,24 @@
-import { Card } from 'antd';
+import { Card, message } from 'antd';
 import { FC } from 'react';
-import { Index } from '../../types';
+import { IQuiz } from '../../types';
 import { getRandomEmoji } from '../../utils';
 import { useRouter } from 'next/router';
+import { QuizzesState } from '../../store/quizzes/reducer';
+import { connect } from 'react-redux';
 
 require('./quiz-card.less');
 
-const QuizCard: FC<Index> = ({ title, id, questions_count }) => {
+interface MainProps extends IQuiz {
+  quizzes: QuizzesState;
+}
+
+const QuizCard: FC<MainProps> = ({ title, id, questions_count, quizzes }) => {
   const router = useRouter();
 
   const handleOnClick = () => {
-    console.log('was clicked: ', id);
+    if (!quizzes.userId) {
+      return message.error('Please create a user first!');
+    }
     router.push(`/quizzes/${id}`);
   };
 
@@ -30,4 +38,10 @@ const QuizCard: FC<Index> = ({ title, id, questions_count }) => {
   );
 };
 
-export default QuizCard;
+const mapDispatchToProps = (dispatch) => ({});
+
+const mapStateToProps = (state) => ({
+  quizzes: state.quizzesReducer,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuizCard);

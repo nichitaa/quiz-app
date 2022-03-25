@@ -6,11 +6,10 @@ import {
 } from 'unique-names-generator';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { wrapper } from '../store/store';
 import { createPlayer } from '../store/quizzes/actions';
-import QuizApiService from '../services/quizApi';
 import { QuizzesState } from '../store/quizzes/reducer';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
 interface MainProps {
   quizzes: QuizzesState;
@@ -21,11 +20,18 @@ interface MainProps {
 const CreatePlayer: FC<MainProps> = (props) => {
   const { createPlayer, quizzes } = props;
   const [form] = Form.useForm();
+  const router = useRouter();
 
-  console.log({ quizzes });
+  /** on-mount (notify user) */
+  useEffect(() => {
+    if (quizzes.userId) {
+      message.info(`Looks like you have created your user (${quizzes.name} - ${quizzes.surname})`);
+    }
+  }, []);
+
   const onSubmit = async (values) => {
-    console.log({ values });
     createPlayer(values);
+    router.push(`/quizzes`);
   };
 
   const onGenerateName = async () => {
@@ -52,7 +58,11 @@ const CreatePlayer: FC<MainProps> = (props) => {
             className={'controls-text'}
           >
             <Typography.Text code={true}>
-              Create a new player 😄🐱‍👤
+              {quizzes.userId
+                ? `Welcome ${quizzes.name} - ${quizzes.surname}`
+                : 'Create a new player'
+              }
+               😄🐱‍👤
             </Typography.Text>
           </Typography.Title>
         </Col>
@@ -65,9 +75,9 @@ const CreatePlayer: FC<MainProps> = (props) => {
               initialValues={
                 quizzes.userId
                   ? {
-                      name: quizzes.name,
-                      surname: quizzes.surname,
-                    }
+                    name: quizzes.name,
+                    surname: quizzes.surname,
+                  }
                   : undefined
               }
             >

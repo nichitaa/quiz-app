@@ -1,9 +1,8 @@
 import { FC } from 'react';
+import { Typography } from 'antd';
+import { useRouter } from 'next/router';
 
 require('./home-action-card.less');
-import Link from 'next/link';
-import { Typography, Button } from 'antd';
-
 
 interface MainProps {
   number: string;
@@ -14,7 +13,14 @@ interface MainProps {
 
 const HomeActionCard: FC<MainProps> = (props) => {
   const { path, number, name, text } = props;
-  return <div className='card'>
+
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(path);
+  };
+
+  return <div className='card' onClick={handleCardClick}>
     <div className='box'>
       <div className='content'>
 
@@ -26,17 +32,10 @@ const HomeActionCard: FC<MainProps> = (props) => {
           className={'controls-text'}
         >
           <Typography.Text code={true}>
-            {name}
+            {name} 🎉
           </Typography.Text>
         </Typography.Title>
         <p>{text}</p>
-
-
-        <Button size={'large'} type={'primary'}>
-          <Link href={path}>
-            🎉
-          </Link>
-        </Button>
 
       </div>
     </div>

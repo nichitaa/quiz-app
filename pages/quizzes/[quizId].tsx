@@ -1,9 +1,43 @@
 import QuizApiService from '../../services/quizApi';
-import { Index } from '../../types';
+import { IQuestion, IQuiz } from '../../types';
 import QuestionCard from '../../components/question-card/question-card';
-import { Col, Row, Typography } from 'antd';
+import { Col, message, Row, Typography } from 'antd';
+import { FC, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
+import { QuizzesState } from '../../store/quizzes/reducer';
+import quizzes from './index';
+import { nextServerAPI } from '../../config/constants';
 
-const Quiz = ({ quizId, quiz }: { quizId: string; quiz: Index }) => {
+interface MainProps {
+  quizzes: QuizzesState;
+  quizId: string;
+  quiz: IQuiz;
+}
+
+const Quiz: FC<MainProps> = ({ quizId, quiz, quizzes }) => {
+
+  const router = useRouter();
+  const [quizDetailsByUser, setQuizDetailsByUser] = useState<undefined | IQuestion[]>(undefined);
+
+  /** on-mount (get quiz details by userId)*/
+  useEffect(() => {
+    if (!quizzes?.userId) {
+      message.error('Please create a user first!', 3);
+      router.push('/quizzes');
+    } else {
+      (async () => {
+        const response = await fetch(`${nextServerAPI}/get-quiz-details?quizId=${quizId}&userId=${quizzes.userId}`)
+          .then((res) => res.json());
+        if (response.error) {
+          message.error('Error getting quiz details for current user: ', response.error);
+        } else {
+          setQuizDetailsByUser(response.questions);
+        }
+      })();
+    }
+  }, []);
+
   return (
     <Row gutter={[8, 8]} style={{ width: '100%', padding: '2rem' }}>
       <Col span={24}>
@@ -12,11 +46,13 @@ const Quiz = ({ quizId, quiz }: { quizId: string; quiz: Index }) => {
           style={{ textAlign: 'center' }}
           className={'controls-text'}
         >
-          <Typography.Text code={true}>{quiz.title}</Typography.Text>
+          <Typography.Text code={true}>{quiz.title} &nbsp;
+            {!!quizzes.answers[quizId] && `[score: ${quizzes.answers[quizId]?.filter(el => el.correct).length}]`}
+          </Typography.Text>
         </Typography.Title>
       </Col>
 
-      {quiz.questions?.map((q) => {
+      {quizDetailsByUser?.map((q) => {
         return (
           <Col span={24} key={q.id}>
             <QuestionCard {...q} />
@@ -46,8 +82,8 @@ export const getStaticPaths = async () => {
  * On build get the props for each quiz
  */
 export const getStaticProps = async ({
-  params,
-}: {
+                                       params,
+                                     }: {
   params: { quizId: string };
 }) => {
   const { quizId } = params;
@@ -60,4 +96,11 @@ export const getStaticProps = async ({
   };
 };
 
-export default Quiz;
+
+const mapDispatchToProps = (dispatch) => ({});
+
+const mapStateToProps = (state) => ({
+  quizzes: state.quizzesReducer,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quiz);

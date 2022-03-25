@@ -2,7 +2,7 @@
  * The app has few simple interfaces/types that does not require splitting it over multiple files
  */
 
-export interface Index {
+export interface IQuiz {
   id: number;
   title: string;
   questions_count: number;
