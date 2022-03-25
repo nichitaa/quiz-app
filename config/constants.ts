@@ -1,1 +1,1 @@
-export const nextServerAPI = 'http://localhost:3000/api';
+export const nextServerAPI = process.env.NEXT_PUBLIC_SERVER_BASE_URL;
