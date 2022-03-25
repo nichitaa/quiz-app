@@ -1,0 +1,1 @@
+export const nextServerAPI = 'http://localhost:3000/api';

@@ -2,7 +2,7 @@ import { FC } from 'react';
 import QuizCard from '../../components/quiz-card/quiz-card';
 import { Col, Row, Typography } from 'antd';
 import QuizApiService from '../../services/quizApi';
-import { IQuiz } from '../../types/IQuiz';
+import { IQuiz } from '../../types';
 
 interface MainProps {
   quizzes: IQuiz[];
@@ -17,7 +17,7 @@ const Quizzes: FC<MainProps> = ({ quizzes }) => (
         className={'controls-text'}
       >
         <Typography.Text code={true}>
-          {quizzes.length} available quizzes! 💡⚡
+          {quizzes.length} available quizzes for you! 💡⚡
         </Typography.Text>
       </Typography.Title>
     </Col>

@@ -3,7 +3,8 @@ import {
   IQuiz,
   ISubmitQuestionBody,
   ISubmitQuestionResponse,
-} from '../types/IQuiz';
+  IUser,
+} from '../types';
 import qs from 'qs';
 
 export default class QuizApiService {
@@ -15,7 +16,8 @@ export default class QuizApiService {
   private developerSecret =
     '9f2da0e705273f49b622258dbb529061453f0cc30f9f851fdfa3c824c69d1197';
 
-  private constructor() {}
+  private constructor() {
+  }
 
   public static getInstance(): QuizApiService {
     if (!QuizApiService.instance) {
@@ -33,9 +35,22 @@ export default class QuizApiService {
           'X-Developer-Key': this.developerKey,
           'X-Developer-Secret': this.developerSecret,
         },
-      }
-    ).then((res) => res.json());
+      },
+    )
+      .then((res) => res.json());
     return response.token;
+  };
+
+  public createPlayer = async (body): Promise<IUser> => {
+    const token = await this.getAccessToken();
+    return await fetch(`${this.quizApiBaseUrl}/v54/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': token,
+      },
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
   };
 
   public getAllQuizzes = async (): Promise<IQuiz[]> => {
@@ -47,7 +62,7 @@ export default class QuizApiService {
 
   public getQuizById = async (
     quizId: string,
-    user_id?: string
+    user_id?: string,
   ): Promise<IQuestionApiResponse> => {
     const token = await this.getAccessToken();
     const url = `${this.quizApiBaseUrl}/v54/quizzes/${quizId}?${qs.stringify({
@@ -58,16 +73,19 @@ export default class QuizApiService {
     }).then((res) => res.json());
   };
 
-  public submitQuiz = async (
+  public submitQuizQuestion = async (
     quizId: string,
-    body: ISubmitQuestionBody
+    body: ISubmitQuestionBody,
   ): Promise<ISubmitQuestionResponse> => {
     const token = await this.getAccessToken();
     const url = `${this.quizApiBaseUrl}/v54/quizzes/${quizId}/submit`;
     const quizApiResponse = await fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
-      headers: { 'X-Access-Token': token },
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': token,
+      },
     }).then((res) => res.json());
 
     if (quizApiResponse.message?.length) {
