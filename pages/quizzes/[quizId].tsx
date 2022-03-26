@@ -6,8 +6,8 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { QuizzesState } from '../../store/quizzes/reducer';
-import quizzes from './index';
 import { nextServerAPI } from '../../config/constants';
+import Head from 'next/head';
 
 interface MainProps {
   quizzes: QuizzesState;
@@ -39,27 +39,33 @@ const Quiz: FC<MainProps> = ({ quizId, quiz, quizzes }) => {
   }, []);
 
   return (
-    <Row gutter={[8, 8]} style={{ width: '100%', padding: '2rem' }}>
-      <Col span={24}>
-        <Typography.Title
-          level={2}
-          style={{ textAlign: 'center' }}
-          className={'controls-text'}
-        >
-          <Typography.Text code={true}>{quiz.title} &nbsp;
-            {!!quizzes.answers[quizId] && `[score: ${quizzes.answers[quizId]?.filter(el => el.correct).length}]`}
-          </Typography.Text>
-        </Typography.Title>
-      </Col>
+    <>
+      <Head>
+        <title>quiz - {quizId}</title>
+        <meta property='og:title' content='quiz' key='title' />
+      </Head>
+      <Row gutter={[8, 8]} style={{ width: '100%', padding: '2rem' }}>
+        <Col span={24}>
+          <Typography.Title
+            level={2}
+            style={{ textAlign: 'center' }}
+            className={'controls-text'}
+          >
+            <Typography.Text code={true}>{quiz.title} &nbsp;
+              {!!quizzes.answers[quizId] && `[score: ${quizzes.answers[quizId]?.filter(el => el.correct).length}]`}
+            </Typography.Text>
+          </Typography.Title>
+        </Col>
 
-      {quizDetailsByUser?.map((q) => {
-        return (
-          <Col span={24} key={q.id}>
-            <QuestionCard {...q} />
-          </Col>
-        );
-      })}
-    </Row>
+        {quizDetailsByUser?.map((q) => {
+          return (
+            <Col span={24} key={q.id}>
+              <QuestionCard {...q} />
+            </Col>
+          );
+        })}
+      </Row>
+    </>
   );
 };
 

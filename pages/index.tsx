@@ -10,7 +10,7 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>quiz-app</title>
-        <link rel='icon' href='/favicon.ico' />
+        <meta property="og:title" content="quiz-app" key="title" />
       </Head>
       <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
         <Row gutter={[8, 8]}>

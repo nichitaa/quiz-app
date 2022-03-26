@@ -10,6 +10,7 @@ import { createPlayer } from '../store/quizzes/actions';
 import { QuizzesState } from '../store/quizzes/reducer';
 import { FC, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 interface MainProps {
   quizzes: QuizzesState;
@@ -49,78 +50,84 @@ const CreatePlayer: FC<MainProps> = (props) => {
   };
 
   return (
-    <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
-      <Col>
+    <>
+      <Head>
+        <title>create a new player</title>
+        <meta property='og:title' content='create a new player' key='title' />
+      </Head>
+      <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
         <Col>
-          <Typography.Title
-            level={2}
-            style={{ textAlign: 'center' }}
-            className={'controls-text'}
-          >
-            <Typography.Text code={true}>
-              {quizzes.userId
-                ? `Welcome ${quizzes.name} - ${quizzes.surname}`
-                : 'Create a new player'
-              }
-               😄🐱‍👤
-            </Typography.Text>
-          </Typography.Title>
-        </Col>
-        <Col>
-          <Card style={{ width: '100%' }}>
-            <Form
-              form={form}
-              onFinish={onSubmit}
-              labelAlign={'left'}
-              initialValues={
-                quizzes.userId
-                  ? {
-                    name: quizzes.name,
-                    surname: quizzes.surname,
-                  }
-                  : undefined
-              }
+          <Col>
+            <Typography.Title
+              level={2}
+              style={{ textAlign: 'center' }}
+              className={'controls-text'}
             >
-              <Form.Item name={'name'} rules={[{ required: true }]}>
-                <Input
-                  placeholder={'Player name, e.g.: John'}
-                  disabled={!!quizzes.userId}
-                />
-              </Form.Item>
-              <Form.Item name={'surname'} rules={[{ required: true }]}>
-                <Input
-                  placeholder={'Player surname, e.g.: Doe'}
-                  disabled={!!quizzes.userId}
-                />
-              </Form.Item>
-              <Form.Item>
-                <Row gutter={8}>
-                  <Col span={12}>
-                    <Button
-                      block={true}
-                      onClick={onGenerateName}
-                      disabled={!!quizzes.userId}
-                    >
-                      Generate Random
-                    </Button>
-                  </Col>
-                  <Col span={12}>
-                    <Button
-                      block={true}
-                      type={'primary'}
-                      htmlType={'submit'}
-                      disabled={!!quizzes.userId}
-                    >
-                      Create
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Item>
-            </Form>
-          </Card>
+              <Typography.Text code={true}>
+                {quizzes.userId
+                  ? `Welcome ${quizzes.name} - ${quizzes.surname}`
+                  : 'Create a new player'
+                }
+                😄🐱‍👤
+              </Typography.Text>
+            </Typography.Title>
+          </Col>
+          <Col>
+            <Card style={{ width: '100%' }}>
+              <Form
+                form={form}
+                onFinish={onSubmit}
+                labelAlign={'left'}
+                initialValues={
+                  quizzes.userId
+                    ? {
+                      name: quizzes.name,
+                      surname: quizzes.surname,
+                    }
+                    : undefined
+                }
+              >
+                <Form.Item name={'name'} rules={[{ required: true }]}>
+                  <Input
+                    placeholder={'Player name, e.g.: John'}
+                    disabled={!!quizzes.userId}
+                  />
+                </Form.Item>
+                <Form.Item name={'surname'} rules={[{ required: true }]}>
+                  <Input
+                    placeholder={'Player surname, e.g.: Doe'}
+                    disabled={!!quizzes.userId}
+                  />
+                </Form.Item>
+                <Form.Item>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <Button
+                        block={true}
+                        onClick={onGenerateName}
+                        disabled={!!quizzes.userId}
+                      >
+                        Generate Random
+                      </Button>
+                    </Col>
+                    <Col span={12}>
+                      <Button
+                        block={true}
+                        type={'primary'}
+                        htmlType={'submit'}
+                        disabled={!!quizzes.userId}
+                      >
+                        Create
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form.Item>
+              </Form>
+            </Card>
+          </Col>
         </Col>
-      </Col>
-    </Row>
+      </Row>
+    </>
   );
 };
 

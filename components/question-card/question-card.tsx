@@ -90,9 +90,9 @@ const QuestionCard: FC<MainProps> = (props) => {
             <Col>
               {submittedDetails.sent
                 && <>
-                  {submittedDetails.correct && <Alert message={'Correct ✅'} type={'success'} />}
-                  {!submittedDetails.correct &&
-                    <Alert
+                  {(submittedDetails.correct || answered_correctly)
+                    ? <Alert message={'Correct ✅'} type={'success'} />
+                    : <Alert
                       message={`Wrong ${submittedDetails.correct_answer ? `(correct answer: ${submittedDetails.correct_answer})` : ''} ❌`}
                       type={'error'} />}
                 </>}
