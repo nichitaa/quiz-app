@@ -93,4 +93,22 @@ export default class QuizApiService {
     }
     return quizApiResponse;
   };
+
+  public createQuiz = async (payload: any): Promise<any> => {
+    const token = await this.getAccessToken();
+    const url = `${this.quizApiBaseUrl}/v54/quizzes`;
+    const quizApiResponse = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': token,
+      },
+    }).then((res) => res.json());
+
+    if (quizApiResponse.message?.length) {
+      return { error: quizApiResponse.message[0] };
+    }
+    return quizApiResponse;
+  };
 }

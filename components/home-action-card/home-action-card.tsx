@@ -7,7 +7,7 @@ require('./home-action-card.less');
 interface MainProps {
   number: string;
   name: string;
-  text: string;
+  text?: string;
   path: string;
 }
 
@@ -35,7 +35,7 @@ const HomeActionCard: FC<MainProps> = (props) => {
             {name} 🎉
           </Typography.Text>
         </Typography.Title>
-        <p>{text}</p>
+        {text && <p>{text}</p>}
 
       </div>
     </div>
