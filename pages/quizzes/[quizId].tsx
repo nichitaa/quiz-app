@@ -1,7 +1,7 @@
 import QuizApiService from '../../services/quizApi';
 import { IQuestion, IQuiz } from '../../types';
 import QuestionCard from '../../components/question-card/question-card';
-import { Col, message, Row, Typography } from 'antd';
+import { Col, message, Row, Spin, Typography } from 'antd';
 import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
@@ -19,6 +19,10 @@ const Quiz: FC<MainProps> = ({ quizId, quiz, quizzes }) => {
 
   const router = useRouter();
   const [quizDetailsByUser, setQuizDetailsByUser] = useState<undefined | IQuestion[]>(undefined);
+
+  if (router.isFallback) {
+    return <Spin spinning={true} />;
+  }
 
   /** on-mount (get quiz details by userId)*/
   useEffect(() => {
@@ -80,7 +84,7 @@ export const getStaticPaths = async () => {
   }));
   return {
     paths: paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 

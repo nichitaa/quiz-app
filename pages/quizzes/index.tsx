@@ -39,7 +39,10 @@ const Quizzes: FC<MainProps> = ({ quizzes }) => (
 
 export const getStaticProps = async (context) => {
   const quizzes = await QuizApiService.getInstance().getAllQuizzes();
-  return { props: { quizzes } };
+  return {
+    props: { quizzes },
+    revalidate: 20,
+  };
 };
 
 export default Quizzes;
