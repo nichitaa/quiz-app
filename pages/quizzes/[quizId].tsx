@@ -27,7 +27,7 @@ const Quiz: FC<MainProps> = ({ quizId, quiz, quizzes }) => {
   /** on-mount (get quiz details by userId)*/
   useEffect(() => {
     if (!quizzes?.userId) {
-      message.error('Please create a user first!', 3);
+      message.error('Please create a player first!', 3);
       router.push('/quizzes');
     } else {
       (async () => {

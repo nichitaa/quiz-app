@@ -10,18 +10,18 @@ const Home: NextPage = () => {
     <>
       <Head>
         <title>quiz-app</title>
-        <meta property="og:title" content="quiz-app" key="title" />
+        <meta property='og:title' content='quiz-app' key='title' />
       </Head>
       <Row justify={'center'} align={'middle'} style={{ height: '100%' }}>
         <Row gutter={[8, 8]}>
-          <Col>
+          <Col xs={24} lg={8}>
             <HomeActionCard name={'Create player 🚀'} number={'01'} path={'/create-player'} />
           </Col>
-          <Col>
+          <Col xs={24} lg={8}>
             <HomeActionCard name={'See all quizzes 👀'} number={'02'} path={'/quizzes'} />
           </Col>
-          <Col>
-            <HomeActionCard name={'Create new quiz 👽'} number={'03'} path={'/create-quiz'} />
+          <Col xs={24} lg={8}>
+            <HomeActionCard name={'Create new quiz 👽'} number={'03'} path={'/create-quiz'} requireUser={true} />
           </Col>
         </Row>
       </Row>

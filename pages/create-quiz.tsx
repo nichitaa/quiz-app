@@ -1,14 +1,59 @@
-import React, { Fragment, useState } from 'react';
+import React, { FC, Fragment, useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Alert, Button, Card, Col, Divider, Form, Input, Row, Select, Space, Typography } from 'antd';
-import { DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { Alert, Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Typography } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { nextServerAPI } from '../config/constants';
+import { connect } from 'react-redux';
+import { QuizzesState } from '../store/quizzes/reducer';
+import { useRouter } from 'next/router';
+import { shuffleArray } from '../utils';
 
-const CreateQuiz = () => {
+
+interface MainProps {
+  quizzes: QuizzesState;
+}
+
+const CreateQuiz: FC<MainProps> = ({ quizzes }) => {
   const [form] = Form.useForm();
+  const router = useRouter();
   const [questionsNo, setQuestionsNo] = useState(2);
 
-  const onSubmit = (values) => {
-    console.log('values: ', values);
+  /** on-mount (check userId)*/
+  useEffect(() => {
+    if (!quizzes?.userId) {
+      message.error('Please create a player first!', 3);
+      router.push('/create-player');
+    }
+  }, []);
+
+  const onSubmit = async (values) => {
+    const questions = values.questions.map(el => {
+      // 2 required, 2 optional, 1 correct
+      let answers = [el.correct_answer, el.answer1, el.answer2, el.answer3, el.answer4]
+        .filter(i => i);
+      answers = shuffleArray(answers);
+      return {
+        answers,
+        question: el.question,
+        correct_answer: el.correct_answer,
+      };
+    });
+    const payload = {
+      data: {
+        questions,
+        title: values.title,
+      },
+    };
+    const response = await fetch(`${nextServerAPI}/create-quiz`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }).then(res => res.json());
+    if ('error' in response) {
+      return message.error(response.error, 3);
+    }
+
+    form.resetFields();
+    return message.success(`Successfully create question with Id: ${response.id}`, 3);
   };
 
   const handleQuestionNoChange = (nr) => {
@@ -38,23 +83,24 @@ const CreateQuiz = () => {
             >
               <Typography.Text code={true}>
                 Create a quiz of maximum&nbsp;
-                <Select placeholder={'no.'} value={questionsNo} onChange={handleQuestionNoChange}>
+                <Select placeholder={'no.'} value={questionsNo} status={'warning'} onChange={handleQuestionNoChange}>
                   <Select.Option value={2}>2</Select.Option>
                   <Select.Option value={3}>3</Select.Option>
                   <Select.Option value={4}>4</Select.Option>
                   <Select.Option value={5}>5</Select.Option>
                 </Select>
-                &nbsp;questions
+                &nbsp;questions 🤔
               </Typography.Text>
             </Typography.Title>
           </Col>
           <Col>
-            <Card style={{ width: '100%', maxWidth: '600px' }}>
+            <Card style={{ maxWidth: '650px' }}>
               <Form
                 form={form}
                 onFinish={onSubmit}
                 labelAlign={'left'}
                 initialValues={{ questions: [{}] }}
+                colon={false}
               >
                 <Form.Item label={'Title'} name={'title'} rules={[{ required: true }]}>
                   <Input
@@ -70,18 +116,28 @@ const CreateQuiz = () => {
                       <span>* Two additional question answers are required (a, b - required and c,d - optional)</span>
                       <br />
                       <span>* Changing the question no from a greater to a smaller value will delete last questions</span>
+                      <br />
+                      <span>* The new quiz will appear in the quizzes list in a few seconds after creating it</span>
                     </div>
                   }
                   type={'info'}
                   showIcon={true}
                 />
-
-                <Divider />
                 <Form.List name='questions'>
                   {(fields, { add, remove }) => (
                     <>
                       {fields.map(({ key, name, ...restField }) => (
                         <Fragment key={key}>
+                          <Divider orientation={'left'} plain={true}>
+                            <span style={{
+                              fontSize: '14px',
+                              fontWeight: 'normal',
+                              fontStyle: 'italic',
+                              opacity: 0.7,
+                            }}>
+                              question {name + 1}
+                            </span>
+                          </Divider>
                           <Row gutter={[8, 8]}>
                             <Col span={22}>
                               <Form.Item
@@ -91,14 +147,17 @@ const CreateQuiz = () => {
                                 wrapperCol={{ span: 24 }}
                                 style={{ marginBottom: 0 }}
                               >
-                                <Input.TextArea rows={1} placeholder={'Question text'} />
+                                <Input.TextArea rows={1} placeholder={'Question text'} maxLength={300} />
                               </Form.Item>
                             </Col>
                             <Col span={2}>
-                              {fields.length > 1 ?
-                                <Button block={true} icon={<DeleteOutlined />} onClick={() => remove(name)}
-                                        danger={true} /> : null}
-
+                              <Button
+                                block={true}
+                                icon={<DeleteOutlined />}
+                                onClick={() => remove(name)}
+                                danger={true}
+                                disabled={fields.length === 1}
+                              />
                             </Col>
                             <Col span={24}>
                               <Form.Item
@@ -154,11 +213,10 @@ const CreateQuiz = () => {
                               </Form.Item>
                             </Col>
                           </Row>
-                          <Divider />
                         </Fragment>
                       ))}
                       {questionsNo && questionsNo > fields.length
-                        && <Form.Item wrapperCol={{ span: 24 }}>
+                        && <Form.Item wrapperCol={{ span: 24 }} style={{ marginTop: 24 }}>
                           <Button type='dashed' onClick={() => add()} block={true}>
                             Add question
                           </Button>
@@ -166,7 +224,7 @@ const CreateQuiz = () => {
 
                       {questionsNo === fields.length &&
                         <Alert
-                          style={{ marginBottom: 24 }}
+                          style={{ margin: '24px 0' }}
                           message={<span style={{ fontStyle: 'italic', fontWeight: 'bold', fontSize: 14 }}>Reached questions limit!</span>}
                           type={'warning'}
                           description={
@@ -182,8 +240,11 @@ const CreateQuiz = () => {
                 </Form.List>
 
                 <Form.Item>
-                  <Row gutter={8} justify={'end'}>
-                    <Col span={6}>
+                  <Row gutter={8} justify={'space-between'}>
+                    <Button>
+                      See all quizzes
+                    </Button>
+                    <Space direction={'horizontal'}>
                       <Button
                         block={true}
                         type={'primary'}
@@ -192,8 +253,6 @@ const CreateQuiz = () => {
                       >
                         Discard
                       </Button>
-                    </Col>
-                    <Col span={6}>
                       <Button
                         block={true}
                         type={'primary'}
@@ -201,7 +260,7 @@ const CreateQuiz = () => {
                       >
                         Create
                       </Button>
-                    </Col>
+                    </Space>
                   </Row>
                 </Form.Item>
               </Form>
@@ -213,4 +272,10 @@ const CreateQuiz = () => {
   );
 };
 
-export default CreateQuiz;
+const mapDispatchToProps = (dispatch) => ({});
+
+const mapStateToProps = (state) => ({
+  quizzes: state.quizzesReducer,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateQuiz);

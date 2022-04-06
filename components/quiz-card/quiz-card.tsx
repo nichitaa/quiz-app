@@ -17,7 +17,7 @@ const QuizCard: FC<MainProps> = ({ title, id, questions_count, quizzes }) => {
 
   const handleOnClick = () => {
     if (!quizzes.userId) {
-      return message.error('Please create a user first!');
+      return message.error('Please create a player first!');
     }
     router.push(`/quizzes/${id}`);
   };

@@ -41,7 +41,7 @@ export const getStaticProps = async (context) => {
   const quizzes = await QuizApiService.getInstance().getAllQuizzes();
   return {
     props: { quizzes },
-    revalidate: 20,
+    revalidate: 10,
   };
 };
 
