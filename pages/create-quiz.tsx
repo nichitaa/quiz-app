@@ -241,7 +241,7 @@ const CreateQuiz: FC<MainProps> = ({ quizzes }) => {
 
                 <Form.Item>
                   <Row gutter={8} justify={'space-between'}>
-                    <Button>
+                    <Button onChange={() => router.push('/quizzes')}>
                       See all quizzes
                     </Button>
                     <Space direction={'horizontal'}>
