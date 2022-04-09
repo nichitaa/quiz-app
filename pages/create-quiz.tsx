@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { QuizzesState } from '../store/quizzes/reducer';
 import { useRouter } from 'next/router';
 import { shuffleArray } from '../utils';
+import { IQuestion, IQuestionReq } from '../types';
 
 
 interface MainProps {
@@ -27,17 +28,29 @@ const CreateQuiz: FC<MainProps> = ({ quizzes }) => {
   }, []);
 
   const onSubmit = async (values) => {
-    const questions = values.questions.map(el => {
-      // 2 required, 2 optional, 1 correct
-      let answers = [el.correct_answer, el.answer1, el.answer2, el.answer3, el.answer4]
+    const questions: IQuestionReq[] = [];
+    for (const el of values.questions) {
+      let answers = [el.answer1, el.answer2, el.answer3, el.answer4]
         .filter(i => i);
+
+      // check for duplicates
+      if (new Set(answers).size !== answers.length) {
+        return message.error(`You have duplicates answers for question: ${el.question}`);
+      }
+
+      // check for correct answer in other answers
+      if (answers.includes(el.correct_answer)) {
+        return message.error(`No need to include the correct answer in additional options for question: ${el.question}`);
+      }
+
+      answers.push(el.correct_answer);
       answers = shuffleArray(answers);
-      return {
+      questions.push({
         answers,
         question: el.question,
         correct_answer: el.correct_answer,
-      };
-    });
+      });
+    }
     const payload = {
       data: {
         questions,
@@ -117,7 +130,7 @@ const CreateQuiz: FC<MainProps> = ({ quizzes }) => {
                       <br />
                       <span>* Changing the question no from a greater to a smaller value will delete last questions</span>
                       <br />
-                      <span>* The new quiz will appear in the quizzes list in a few seconds after creating it</span>
+                      <span>* The new quiz will appear in the quizzes list in a few seconds after creating it, just click on refresh quizzes button</span>
                     </div>
                   }
                   type={'info'}
@@ -229,7 +242,7 @@ const CreateQuiz: FC<MainProps> = ({ quizzes }) => {
                           type={'warning'}
                           description={
                             <div style={{ fontSize: 13 }}>
-                              <span>{`You've defined the maximum number of questions as ${questionsNo}.`}</span>
+                              <span>{`You've defined the maximum number of questions as ${questionsNo}`}</span>
                             </div>
                           }
                           showIcon={true}

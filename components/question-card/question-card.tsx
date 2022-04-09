@@ -113,8 +113,8 @@ const QuestionCard: FC<MainProps> = (props) => {
         <Form.Item name={'answer'} rules={[{ required: true }]}>
           <Radio.Group disabled={submittedDetails.sent}>
             <Space direction={'vertical'}>
-              {answers.map((a) => (
-                <Radio value={a} key={a}>
+              {answers.map((a, index) => (
+                <Radio value={a} key={`${a}_${index}`}>
                   {a}
                 </Radio>
               ))}

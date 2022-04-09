@@ -15,6 +15,13 @@ export interface IQuestion {
   answers: string[];
   answered_correctly?: boolean;
   submitted_answer?: string;
+  correct_answer?: string;
+}
+
+export interface IQuestionReq {
+  answers: string[];
+  question: string;
+  correct_answer: string;
 }
 
 export interface IQuestionApiResponse {

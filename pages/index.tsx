@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { Button, Divider, Row, Col } from 'antd';
+import { Col, Row, Typography } from 'antd';
 import { HomeActionCard } from '../components';
 
 require('../styles/home-page.less');
@@ -25,6 +25,9 @@ const Home: NextPage = () => {
           </Col>
         </Row>
       </Row>
+      <Typography.Text code={true} style={{ position: 'fixed', bottom: 0, right: 0 }}>
+        <a href='https://github.com/nichitaa'>https://github.com/nichitaa</a>
+      </Typography.Text>
     </>
   );
 };

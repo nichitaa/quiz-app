@@ -1,8 +1,8 @@
 import QuizApiService from '../../services/quizApi';
 import { IQuestion, IQuiz } from '../../types';
 import QuestionCard from '../../components/question-card/question-card';
-import { Col, message, Row, Spin, Typography } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { Alert, Col, message, Row, Spin, Typography } from 'antd';
+import React, { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { QuizzesState } from '../../store/quizzes/reducer';
@@ -60,6 +60,20 @@ const Quiz: FC<MainProps> = ({ quizId, quiz, quizzes }) => {
             </Typography.Text>
           </Typography.Title>
         </Col>
+
+        <Alert
+          style={{ width: '100%' }}
+          message={<span style={{ fontStyle: 'italic', fontWeight: 'bold', fontSize: 14 }}>Note!</span>}
+          description={
+            <div style={{ fontSize: 13 }}>
+              <span>* Each question has only a <strong>single</strong> correct answer</span>
+              <br />
+              <span>* You <strong>can not edit</strong> the submitted answer</span>
+            </div>
+          }
+          type={'info'}
+          showIcon={true}
+        />
 
         {quizDetailsByUser?.map((q) => {
           return (
