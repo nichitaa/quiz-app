@@ -25,9 +25,6 @@ const Home: NextPage = () => {
           </Col>
         </Row>
       </Row>
-      <Typography.Text code={true} style={{ position: 'fixed', bottom: 0, right: 0 }}>
-        <a href='https://github.com/nichitaa'>https://github.com/nichitaa</a>
-      </Typography.Text>
     </>
   );
 };

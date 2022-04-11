@@ -31,8 +31,7 @@ const CreatePlayer: FC<MainProps> = (props) => {
   }, []);
 
   const onSubmit = async (values) => {
-    createPlayer(values);
-    router.push(`/quizzes`);
+    await createPlayer(values);
   };
 
   const onGenerateName = async () => {
@@ -102,23 +101,38 @@ const CreatePlayer: FC<MainProps> = (props) => {
                 <Form.Item>
                   <Row gutter={8}>
                     <Col span={12}>
-                      <Button
-                        block={true}
-                        onClick={onGenerateName}
-                        disabled={!!quizzes.userId}
-                      >
-                        Generate Random
-                      </Button>
+                      {!!quizzes.userId
+                        ? <Button
+                          block={true}
+                          onClick={() => router.push('/')}
+                        >
+                          Go to home page
+                        </Button>
+                        : <Button
+                          block={true}
+                          onClick={onGenerateName}
+                          disabled={!!quizzes.userId}
+                        >
+                          Generate Random
+                        </Button>}
                     </Col>
                     <Col span={12}>
-                      <Button
-                        block={true}
-                        type={'primary'}
-                        htmlType={'submit'}
-                        disabled={!!quizzes.userId}
-                      >
-                        Create
-                      </Button>
+                      {!!quizzes.userId
+                        ? <Button
+                          block={true}
+                          type={'primary'}
+                          onClick={() => router.push(`/quizzes`)}
+                        >
+                          See all quizzes
+                        </Button>
+                        : <Button
+                          block={true}
+                          type={'primary'}
+                          htmlType={'submit'}
+                          disabled={!!quizzes.userId}
+                        >
+                          Create
+                        </Button>}
                     </Col>
                   </Row>
                 </Form.Item>

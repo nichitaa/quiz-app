@@ -4,7 +4,7 @@ import { Button, Col, Row, Tooltip, Typography } from 'antd';
 import QuizApiService from '../../services/quizApi';
 import { IQuiz } from '../../types';
 import Head from 'next/head';
-import { UndoOutlined } from '@ant-design/icons';
+import { HomeOutlined, PlusOutlined, PlusSquareOutlined, UndoOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 
 interface MainProps {
@@ -35,18 +35,32 @@ const Quizzes: FC<MainProps> = ({ quizzes }) => {
                   {quizzes.length} available quizzes for you! 💡⚡
                 </Col>
                 <Col>
-                  <Tooltip title={'reload the quizes'}>
-                    <Button
-                      icon={<UndoOutlined style={{ fontSize: '24px' }} />}
-                      onClick={handleReloadQuizzes}
-                      type={'primary'}
-                      shape={'circle'}
-                    />
-                  </Tooltip>
+                  <Row gutter={[8, 8]}>
+                    <Col>
+                      <Tooltip title={'go to Home page'}>
+                        <Button icon={<HomeOutlined style={{ fontSize: '24px' }} />} type={'text'}
+                                onClick={() => router.push('/')} />
+                      </Tooltip>
+                    </Col>
+                    <Col>
+                      <Tooltip title={'create new quiz'}>
+                        <Button icon={<PlusOutlined style={{ fontSize: '24px' }} />} type={'text'}
+                                onClick={() => router.push('/create-quiz')} />
+                      </Tooltip>
+                    </Col>
+                    <Col>
+                      <Tooltip title={'reload the quizes'}>
+                        <Button
+                          icon={<UndoOutlined style={{ fontSize: '24px' }} />}
+                          onClick={handleReloadQuizzes}
+                          type={'text'}
+                        />
+                      </Tooltip>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Typography.Text>
-
           </Typography.Title>
         </Col>
 
